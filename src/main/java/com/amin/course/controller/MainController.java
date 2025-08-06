@@ -4,59 +4,50 @@ import com.amin.course.entity.Cat;
 import com.amin.course.repository.CatRepo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Log4j2
+
 @RestController
+@RequiredArgsConstructor
 public class MainController {
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private CatRepo catRepo;
-    @GetMapping("/api/main")
-    public String mainListiner(){
-        return "Hello World";
+    private final CatRepo catRepo;
+    public final ObjectMapper objectMapper;
+
+    @PostMapping("/api/add")
+    public void  addCat(@RequestBody Cat cat){
+        log.info("New row: " +catRepo.save(cat));
     }
 
-    @GetMapping("/api/cat")
-    public String giveCat(){
-        Cat cat = new Cat("Barsik", 5, "orange");
+    @SneakyThrows
+    @GetMapping("/api/all")
+    public List<Cat> getAll() {
+        return catRepo.findAll();
+    }
 
-        String jsonData = null;
-        try {
-            jsonData = objectMapper.writeValueAsString(cat);
-        }catch (JsonProcessingException e){
-            System.out.println("Не удалось добавить кота " + e.getMessage());
-        }
-        return  jsonData;
+    @GetMapping("/api")
+    public Cat getCat(@RequestParam int id) {
+        return catRepo.findById(id).orElseThrow();
     }
-    @PostMapping("/api/special")
-    public String getSpecialCat(@RequestParam String name){
-        Cat cat = new Cat(name, 5, "orange");
 
-        String jsonData = null;
-        try {
-            jsonData = objectMapper.writeValueAsString(cat);
-        }catch (JsonProcessingException e){
-            System.out.println("Не удалось добавить кота " + e.getMessage());
-        }
-        return  jsonData;
+    @DeleteMapping("/api")
+    public void deleteCat(@RequestParam int id) {
+        catRepo.deleteById(id);
     }
-    @PostMapping("/api/cats")
-    public ResponseEntity<String> saveCat(@RequestBody Cat cat) {
-        try {
-            Cat savedCat = catRepo.save(cat);
-            String jsonResponse = objectMapper.writeValueAsString(savedCat);
-            return ResponseEntity.ok(jsonResponse);
-        } catch (JsonProcessingException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Ошибка при обработке данных кота");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Не удалось сохранить кота: " + e.getMessage());
-        }
+
+    @PutMapping("/api")
+    public void updateCat(@RequestBody Cat cat) {
+        catRepo.save(cat);
     }
+
 }
+
 
