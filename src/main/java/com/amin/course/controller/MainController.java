@@ -18,7 +18,7 @@ public class MainController {
 
     @GetMapping("/api/cat")
     public String giveCat(){
-        Cat cat = new Cat("Barsik", 5, "orange", "Asmar");
+        Cat cat = new Cat("Barsik", 5, "orange");
 
         String jsonData = null;
         try {
@@ -30,7 +30,7 @@ public class MainController {
     }
     @PostMapping("/api/special")
     public String getSpecialCat(@RequestParam String name){
-        Cat cat = new Cat(name, 5, "orange", "Asmar");
+        Cat cat = new Cat(name, 5, "orange");
 
         String jsonData = null;
         try {

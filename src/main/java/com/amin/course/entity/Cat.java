@@ -1,20 +1,39 @@
 package com.amin.course.entity;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import static lombok.AccessLevel.*;
 
 @Data
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@FieldDefaults(level = PRIVATE)
+@Entity
+@Table(name = "cats")
 public class Cat {
-    String name;
-    int age;
-    String color;
-    String description;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
+    @Column(nullable = false, length = 50)
+    private String name;
+
+    @Column(length = 50)
+    private int age;
+
+    @Column(length = 50)
+    private String color;
+
+    @Column(length = 50)
+    private String description;
+
+    public Cat(String name, int age, String color) {
+        this.name = name;
+        this.age = age;
+        this.color = color;
+    }
+
+    public Cat() {
+    }
 }
